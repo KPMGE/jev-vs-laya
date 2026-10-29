@@ -25,6 +25,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 <!-- one line per closed ticket -->
 
 - [Jev: API surface, question types, pricing](issues/04-jev-api-surface.md): one `/v1/systemone` call per message carrying all fields as noul/choice/score questions; pin `jev-1.14.0`; $0.042/MTok input; shared client hinges on Laya's response shape.
+- [Laya: fine-tuning recipe](issues/02-laya-fine-tuning-recipe.md): full fine-tune via `laya.train.finetune` on per-message JSONL (urgency 0–4), MPS with micro_batch 1 + grad checkpointing, est. hours/epoch; tuned model served as an extra `laya-serve` model.
 
 ## Not yet specified
 
