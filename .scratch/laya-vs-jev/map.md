@@ -29,10 +29,8 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 
 ## Not yet specified
 
-- **Fine-tune run**: hyperparameters, epochs, single multi-head model vs one model per field, how a fine-tuned Laya is served behind the same Jev-compatible endpoint. Hangs on Laya's fine-tuning recipe and the locked schema.
 - **Compare script design**: CLI shape, caching/recording of responses (like the demo's `--gravado`), concurrency and rate limits, how confidence is extracted per question type for calibration, cost model for local Laya (₀ API cost — electricity/hardware note?).
 - **Docs structure**: setup, data, labeling, training, evaluation, results; how results get refreshed once the Jev key lands.
-- **Colab fallback**: only if local training doesn't fit in 16 GB.
 - **Trust gate / thresholds**: whether to report the demo's ≥0.8 auto / ≥0.5 confirm / human gate as an extra metric.
 
 ## Out of scope
