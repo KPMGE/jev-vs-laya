@@ -9,7 +9,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 ## Notes
 
 - **Execution is carried into this map** (override of plan-only default): tickets may build things, not just decide. The map ends when the compare script runs end to end.
-- Domain: triaging inbound messages from users of a SaaS platform. Working field list, to be locked in a ticket: `issue_type` (bug / billing / cancellation / how-to / feature-request / account-access / praise), `team` (engineering / billing / customer-success / support), `urgency` 1–5, `churn_risk` low/med/high, `sentiment` neg/neu/pos, `needs_human` bool.
+- Domain: triaging inbound messages from users of a SaaS platform (terms in `GLOSSARY.md`, wording in `src/triage/schema.py`). Locked field list: `issue_type` (bug / billing / cancellation / how-to / feature-request / account-access / praise), `team` (engineering / billing / customer-success / support), `urgency` 1–5, `churn_risk` low/med/high, `sentiment` neg/neu/pos, `needs_human` bool.
 - Language: English for data, code and docs.
 - Stack: Python + uv. A single Jev-compatible HTTP client talks to both Laya (local Jev-compatible server) and Jev (`api.typesafe.ai`).
 - Ground truth: public dataset → Claude fills missing fields (`ANTHROPIC_API_KEY`) → user hand-verifies the 200-message gold set in a small local review tool. Sonnet is **not** a contender (it labeled the data).
@@ -24,6 +24,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 
 <!-- one line per closed ticket -->
 
+- [Lock the label schema and question mapping](issues/05-lock-label-schema.md): six fields in one call (3 choice, 2 score, 1 noul), main-ask-wins rule, independent team, Claude labels all six with dataset labels as hints; Tobi + TWCS tweets.
 - [Scaffold the repo and smoke-test local Laya](issues/07-scaffold-and-smoke-test-laya.md): uv project + shared httpx client; Laya base serves on MPS at 127.0.0.1:8000, p50 87 ms for a 7-option choice.
 - [Pick a public support-message dataset](issues/03-support-message-dataset.md): ~3k English Tobi-Bueck customer-support-tickets (priority→urgency, queue→team, type→issue_type) + ~500 real TWCS SaaS tweets; Claude fills churn/sentiment/needs_human; non-commercial licenses.
 - [Laya: install and serve locally on Apple Silicon](issues/01-laya-local-serving.md): `laya[serve]` 0.4.17 + `laya-serve` on MPS at 127.0.0.1:8000, Jev-identical requests, so one client with a swapped base URL; compute confidence from probabilities since Laya's formula differs.

@@ -9,24 +9,11 @@ import sys
 from dotenv import load_dotenv
 
 from triage.client import DecisionClient, jev, laya
+from triage.schema import QUESTIONS as SCHEMA
 
 MESSAGE = "I was charged twice on my card this month and nobody answers. Fix it TODAY or I'm cancelling."
 
-QUESTIONS = {
-    "issue_type": {
-        "type": "choice",
-        "instructions": "What kind of issue is the user raising?",
-        "criteria": {
-            "bug": "Something in the product is broken or erroring",
-            "billing": "Charges, invoices, payment methods, refunds",
-            "cancellation": "The user wants to cancel or downgrade",
-            "how-to": "The user asks how to do something",
-            "feature-request": "The user asks for something the product does not do",
-            "account-access": "Login, password, permissions, account settings",
-            "praise": "Compliments or thanks",
-        },
-    }
-}
+QUESTIONS = {"issue_type": SCHEMA["issue_type"]}
 
 
 def main() -> int:
