@@ -1,7 +1,7 @@
 # Labeling protocol and gold review tool
 
 Type: prototype
-Status: open
+Status: claimed
 Blocked by: 05
 
 ## Question
