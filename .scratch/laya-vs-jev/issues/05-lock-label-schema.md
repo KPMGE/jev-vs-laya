@@ -1,7 +1,7 @@
 # Lock the label schema and question mapping
 
 Type: grilling
-Status: open
+Status: claimed
 Blocked by: 01, 03, 04
 
 ## Question
