@@ -13,7 +13,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 - Language: English for data, code and docs.
 - Stack: Python + uv. A single Jev-compatible HTTP client talks to both Laya (local Jev-compatible server) and Jev (`api.typesafe.ai`).
 - Ground truth: Haiku labels train, Opus labels val + gold, user hand-verifies the 200-message gold set (`scripts/review.py`). Claude is **not** a contender (it labeled the data). Budget: under $5 of Anthropic spend.
-- Training: local Apple M5 16 GB (MPS) first; documented Colab fallback.
+- Training: Colab T4 (`notebooks/finetune_colab.ipynb`); two fine-tunes, `laya-ft-head` and `laya-ft-full`. Four contenders in total.
 - Metrics per field × model: accuracy, macro-F1, urgency MAE, calibration (ECE), p50/p95 latency, cost per 1M messages. Output: markdown table + JSON.
 - Prior art to reuse: `~/Projects/mine/jev-talk/demo` (`lados.py` Jev question types and pricing, `triagem.py`), `~/.claude/skills/jev-explore/scripts/jev.py` (stdlib Jev client).
 - Keys come later from the user: `TYPESAFE_API_KEY`, `ANTHROPIC_API_KEY` in `.env`. Every script must degrade gracefully without them.
@@ -24,6 +24,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 
 <!-- one line per closed ticket -->
 
+- [Fine-tune run plan](issues/08-fine-tune-run-plan.md): fine-tune `english` twice (head-only and full), 3 epochs on a Colab T4 via a notebook, hard labels; served as `laya-ft-head` / `laya-ft-full`.
 - [Labeling protocol and gold review tool](issues/06-labeling-and-gold-review.md): Haiku labels all 4,300, Opus relabels the 500 eval messages, human reviews gold in a local web page; keyword boost pool for rare types; ≈$1.35 total.
 - [Fetch and filter the raw datasets](issues/09-fetch-raw-datasets.md): `scripts/fetch_data.py` → 3,500 candidates (3,000 queue-balanced Tobi tickets + 500 tweets from 17 software brands), git-ignored for license reasons.
 - [Lock the label schema and question mapping](issues/05-lock-label-schema.md): six fields in one call (3 choice, 2 score, 1 noul), main-ask-wins rule, independent team, Claude labels all six with dataset labels as hints; Tobi + TWCS tweets.
