@@ -24,6 +24,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 
 <!-- one line per closed ticket -->
 
+- [Scaffold the repo and smoke-test local Laya](issues/07-scaffold-and-smoke-test-laya.md): uv project + shared httpx client; Laya base serves on MPS at 127.0.0.1:8000, p50 87 ms for a 7-option choice.
 - [Pick a public support-message dataset](issues/03-support-message-dataset.md): ~3k English Tobi-Bueck customer-support-tickets (priority→urgency, queue→team, type→issue_type) + ~500 real TWCS SaaS tweets; Claude fills churn/sentiment/needs_human; non-commercial licenses.
 - [Laya: install and serve locally on Apple Silicon](issues/01-laya-local-serving.md): `laya[serve]` 0.4.17 + `laya-serve` on MPS at 127.0.0.1:8000, Jev-identical requests, so one client with a swapped base URL; compute confidence from probabilities since Laya's formula differs.
 - [Jev: API surface, question types, pricing](issues/04-jev-api-surface.md): one `/v1/systemone` call per message carrying all fields as noul/choice/score questions; pin `jev-1.14.0`; $0.042/MTok input; shared client hinges on Laya's response shape.
