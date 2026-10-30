@@ -24,6 +24,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 
 <!-- one line per closed ticket -->
 
+- [Fetch and filter the raw datasets](issues/09-fetch-raw-datasets.md): `scripts/fetch_data.py` → 3,500 candidates (3,000 queue-balanced Tobi tickets + 500 tweets from 17 software brands), git-ignored for license reasons.
 - [Lock the label schema and question mapping](issues/05-lock-label-schema.md): six fields in one call (3 choice, 2 score, 1 noul), main-ask-wins rule, independent team, Claude labels all six with dataset labels as hints; Tobi + TWCS tweets.
 - [Scaffold the repo and smoke-test local Laya](issues/07-scaffold-and-smoke-test-laya.md): uv project + shared httpx client; Laya base serves on MPS at 127.0.0.1:8000, p50 87 ms for a 7-option choice.
 - [Pick a public support-message dataset](issues/03-support-message-dataset.md): ~3k English Tobi-Bueck customer-support-tickets (priority→urgency, queue→team, type→issue_type) + ~500 real TWCS SaaS tweets; Claude fills churn/sentiment/needs_human; non-commercial licenses.

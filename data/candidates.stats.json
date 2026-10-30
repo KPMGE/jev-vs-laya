@@ -1,0 +1,62 @@
+{
+  "tobi_rows": 48587,
+  "tobi_english": 28261,
+  "tobi_kept_by_queue": {
+    "Technical Support": 6786,
+    "Product Support": 4352,
+    "IT Support": 2793,
+    "Customer Service": 3509,
+    "Billing and Payments": 2384,
+    "Service Outages and Maintenance": 926,
+    "General Inquiry": 339
+  },
+  "tobi_picked_by_queue": {
+    "General Inquiry": 339,
+    "Service Outages and Maintenance": 443,
+    "Billing and Payments": 443,
+    "IT Support": 443,
+    "Customer Service": 444,
+    "Product Support": 444,
+    "Technical Support": 444
+  },
+  "twcs_first_inbound": 787346,
+  "twcs_kept_by_brand": {
+    "AppleSupport": 72070,
+    "SpotifyCares": 24771,
+    "hulu_support": 13690,
+    "AdobeCare": 4506,
+    "MicrosoftHelps": 3501,
+    "AzureSupport": 2702,
+    "DropboxSupport": 2742,
+    "GoDaddyHelp": 1299,
+    "TwitterSupport": 656,
+    "NortonSupport": 496,
+    "AWSSupport": 732,
+    "PandoraSupport": 633,
+    "GooglePlayMusic": 495,
+    "YahooCare": 446,
+    "asksalesforce": 421,
+    "mediatemplehelp": 159,
+    "OfficeSupport": 53
+  },
+  "twcs_picked_by_brand": {
+    "OfficeSupport": 29,
+    "mediatemplehelp": 29,
+    "asksalesforce": 29,
+    "YahooCare": 29,
+    "GooglePlayMusic": 29,
+    "NortonSupport": 29,
+    "PandoraSupport": 29,
+    "TwitterSupport": 29,
+    "AWSSupport": 29,
+    "GoDaddyHelp": 29,
+    "AzureSupport": 30,
+    "DropboxSupport": 30,
+    "MicrosoftHelps": 30,
+    "AdobeCare": 30,
+    "hulu_support": 30,
+    "SpotifyCares": 30,
+    "AppleSupport": 30
+  },
+  "candidates": 3500
+}
