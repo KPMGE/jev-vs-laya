@@ -1,7 +1,7 @@
 # Scaffold the repo and smoke-test local Laya
 
 Type: task
-Status: open
+Status: claimed
 Blocked by: 01
 
 ## Question
