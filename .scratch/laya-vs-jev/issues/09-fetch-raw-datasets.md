@@ -1,7 +1,7 @@
 # Fetch and filter the raw datasets
 
 Type: task
-Status: open
+Status: claimed
 Blocked by: 05
 
 ## Question

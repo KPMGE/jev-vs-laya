@@ -24,6 +24,7 @@ cp .env.example .env        # fill keys later; everything runs without them
 | --- | --- | --- |
 | `TYPESAFE_API_KEY` | Calling Jev (`console.typesafe.ai`) | Jev is skipped everywhere |
 | `ANTHROPIC_API_KEY` | Labeling the dataset with Claude | Labeling script refuses to run |
+| `KAGGLE_API_TOKEN` | Downloading the TWCS tweets | Fetch script skips TWCS |
 
 Optional overrides: `LAYA_BASE_URL` (default `http://127.0.0.1:8000`), `TYPESAFE_BASE_URL` (default `https://api.typesafe.ai`).
 
@@ -82,4 +83,6 @@ Apple M5, 16 GB, macOS, `laya` 0.4.17, PyTorch 2.15, `LAYA_DEVICE=mps`, measured
 | Smoke message ("charged twice … or I'm cancelling") | `billing`, P = 0.997, Jev-formula confidence 0.997 |
 | Latency, one 7-option choice, 123 input tokens, 20 warm calls | p50 87 ms, p95 98 ms |
 
-The response's `model` field reads `laya-rl-agent` (the server's routed name), not `english`.
+Jev smoke on the same message: `billing`, confidence 1.000, 266 ms (network round trip), 516 input tokens (Jev counts tokens differently from Laya's 194).
+
+The Laya response's `model` field reads `laya-rl-agent` (the server's routed name), not `english`.
