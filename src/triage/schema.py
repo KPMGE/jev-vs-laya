@@ -88,11 +88,11 @@ QUESTIONS: dict[str, dict] = {
     "needs_human": {
         "type": "noul",
         "instructions": (
-            "Does this message need a person rather than an automated reply or help article? "
-            "True if the user asks for a person, money must be refunded or corrected, there is a "
-            "security, legal or data-loss issue, the user is angry and threatening to leave, an "
-            "outage affects many users, or no self-serve answer could resolve it. False for "
-            "plain how-to questions, praise and simple feature requests."
+            "Does this message need a person to step in personally, beyond the normal queue? "
+            "True only if the user asks for a person, money must be refunded or corrected, there "
+            "is a security, legal or data-loss issue, the user is angry and threatening to leave, "
+            "or an outage affects many users. False for routine bugs handled through the normal "
+            "engineering queue, how-to questions, praise and feature requests."
         ),
     },
 }
@@ -103,6 +103,8 @@ _SIGNOFF = re.compile(
     r"\n\s*(best regards|kind regards|regards|sincerely|thanks|thank you|cheers|best),?\s*\n.*\Z",
     re.IGNORECASE | re.DOTALL,
 )
+_TRAILING_SIGNOFF = re.compile(r"\s*\b(best regards|kind regards|warm regards|regards|sincerely),?\s*\Z", re.IGNORECASE)
+_BR = re.compile(r"\s*<br\s*/?>\s*", re.IGNORECASE)
 _PLACEHOLDER = re.compile(r"\[(your name|name|company|your company|contact information)\]", re.IGNORECASE)
 
 
@@ -111,5 +113,7 @@ def state(body: str, subject: str | None = None) -> str:
 
     Truncation to MAX_STATE_TOKENS happens server-side; tweets have no subject.
     """
+    body = _BR.sub("\n", body)
     body = _PLACEHOLDER.sub("", _SIGNOFF.sub("", body.strip())).strip()
+    body = _TRAILING_SIGNOFF.sub("", body).strip()
     return f"Subject: {subject.strip()}\n\n{body}" if subject else body

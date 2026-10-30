@@ -12,7 +12,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 - Domain: triaging inbound messages from users of a SaaS platform (terms in `GLOSSARY.md`, wording in `src/triage/schema.py`). Locked field list: `issue_type` (bug / billing / cancellation / how-to / feature-request / account-access / praise), `team` (engineering / billing / customer-success / support), `urgency` 1–5, `churn_risk` low/med/high, `sentiment` neg/neu/pos, `needs_human` bool.
 - Language: English for data, code and docs.
 - Stack: Python + uv. A single Jev-compatible HTTP client talks to both Laya (local Jev-compatible server) and Jev (`api.typesafe.ai`).
-- Ground truth: public dataset → Claude fills missing fields (`ANTHROPIC_API_KEY`) → user hand-verifies the 200-message gold set in a small local review tool. Sonnet is **not** a contender (it labeled the data).
+- Ground truth: Haiku labels train, Opus labels val + gold, user hand-verifies the 200-message gold set (`scripts/review.py`). Claude is **not** a contender (it labeled the data). Budget: under $5 of Anthropic spend.
 - Training: local Apple M5 16 GB (MPS) first; documented Colab fallback.
 - Metrics per field × model: accuracy, macro-F1, urgency MAE, calibration (ECE), p50/p95 latency, cost per 1M messages. Output: markdown table + JSON.
 - Prior art to reuse: `~/Projects/mine/jev-talk/demo` (`lados.py` Jev question types and pricing, `triagem.py`), `~/.claude/skills/jev-explore/scripts/jev.py` (stdlib Jev client).
@@ -24,6 +24,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 
 <!-- one line per closed ticket -->
 
+- [Labeling protocol and gold review tool](issues/06-labeling-and-gold-review.md): Haiku labels all 4,300, Opus relabels the 500 eval messages, human reviews gold in a local web page; keyword boost pool for rare types; ≈$1.35 total.
 - [Fetch and filter the raw datasets](issues/09-fetch-raw-datasets.md): `scripts/fetch_data.py` → 3,500 candidates (3,000 queue-balanced Tobi tickets + 500 tweets from 17 software brands), git-ignored for license reasons.
 - [Lock the label schema and question mapping](issues/05-lock-label-schema.md): six fields in one call (3 choice, 2 score, 1 noul), main-ask-wins rule, independent team, Claude labels all six with dataset labels as hints; Tobi + TWCS tweets.
 - [Scaffold the repo and smoke-test local Laya](issues/07-scaffold-and-smoke-test-laya.md): uv project + shared httpx client; Laya base serves on MPS at 127.0.0.1:8000, p50 87 ms for a 7-option choice.
@@ -34,9 +35,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 
 ## Not yet specified
 
-- **Compare script design**: CLI shape, caching/recording of responses (like the demo's `--gravado`), concurrency and rate limits, how confidence is extracted per question type for calibration, cost model for local Laya (₀ API cost — electricity/hardware note?).
-- **Docs structure**: setup, data, labeling, training, evaluation, results; how results get refreshed once the Jev key lands.
-- **Trust gate / thresholds**: whether to report the demo's ≥0.8 auto / ≥0.5 confirm / human gate as an extra metric.
+- **Docs**: README tying setup → data → labeling → training → evaluation → results together; graduates once ticket 11 has a results table.
 
 ## Out of scope
 

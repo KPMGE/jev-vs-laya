@@ -2,9 +2,10 @@
 
     uv run scripts/fetch_data.py
 
-Writes data/candidates.jsonl: 3,000 English Tobi-Bueck tickets + 500 TWCS tweets,
-one JSON object per line with `source`, `id`, `subject`, `body` and `hints`
-(the dataset's own labels, shown to the labeler as hints only).
+Writes data/candidates.jsonl: the base pool of 3,000 English Tobi-Bueck tickets + 500
+TWCS tweets, then up to 800 keyword-matched "boost" tweets for rare issue types.
+One JSON object per line with `source`, `id`, `subject`, `body`, `hints` (the
+dataset's own labels, shown to the labeler as hints only) and `pool` (base/boost).
 
 Downloads are skipped when the files are already in data/raw/. Sampling is seeded.
 See docs/data.md.
@@ -53,6 +54,17 @@ TWCS_BRANDS = [
     "GooglePlayMusic", "YahooCare", "asksalesforce", "mediatemplehelp", "OfficeSupport",
 ]
 TWCS_N = 500
+# Extra keyword-matched tweets for issue types the base pool barely has. They only
+# feed train/val (`pool: "boost"`); the gold set is drawn from the base pool.
+BOOST = {
+    "cancellation": r"\b(cancel\w*|unsubscrib\w*|refund\w*|close my account|delete my account|switching to|leaving)\b",
+    "praise": r"\b(love|loving|thank you|thanks|awesome|amazing|great job|you rock)\b",
+    "account-access": r"\b(password|log ?in|sign ?in|locked out|2fa|two.factor|hacked|verification code)\b",
+    # most "thanks"/"love" tweets are complaints; this one excludes problem words
+    "praise-strict": r"^(?!.*(\bnot\b|n't|\?|\berror|\bissue|\bproblem|\bhelp|\bfix|\bwhy\b|\bbut\b|\bstill\b))"
+                     r".*\b(love|awesome|amazing|great|best|thank you|thanks|kudos|brilliant)\b",
+}
+BOOST_N = 200  # per keyword group
 
 MIN_BODY_CHARS = 40
 MIN_TWEET_CHARS = 30
@@ -171,7 +183,21 @@ def twcs_candidates(path: Path, rng: random.Random, counts: dict) -> list[dict]:
         picked += take
         remaining -= len(take)
     counts["twcs_picked_by_brand"] = dict(collections.Counter(c["hints"]["brand"] for c in picked))
-    return picked
+
+    # Boost: keyword-matched tweets not already picked, drawn with their own seed so the
+    # base sample above stays identical.
+    boost_rng, taken = random.Random(SEED + 1), {c["id"] for c in picked}
+    rest = [c for b in TWCS_BRANDS for c in by_brand[b] if c["id"] not in taken]
+    boost = []
+    for group, pattern in BOOST.items():
+        rx = re.compile(pattern, re.IGNORECASE)
+        matches = [c for c in rest if rx.search(c["body"]) and c["id"] not in taken]
+        take = boost_rng.sample(matches, min(BOOST_N, len(matches)))
+        taken |= {c["id"] for c in take}
+        boost += [{**c, "pool": "boost"} for c in take]
+        counts.setdefault("twcs_boost_matches", {})[group] = len(matches)
+    counts["twcs_boost"] = len(boost)
+    return picked, boost
 
 
 def main() -> int:
@@ -179,9 +205,12 @@ def main() -> int:
     rng = random.Random(SEED)
     counts: dict = {}
     candidates = tobi_candidates(fetch_tobi(), rng, counts)
+    boost = []
     if (twcs := fetch_twcs()) is not None:
-        candidates += twcs_candidates(twcs, rng, counts)
+        picked, boost = twcs_candidates(twcs, rng, counts)
+        candidates += picked
     rng.shuffle(candidates)
+    candidates = [{**c, "pool": "base"} for c in candidates] + boost
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     with open(OUT, "w", encoding="utf-8") as f:

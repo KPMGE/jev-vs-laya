@@ -12,7 +12,7 @@
 
 **Churn risk**: how likely the user is to stop using or paying for the product: low, medium or high. A threat to leave makes it high even when the issue type is something else.
 
-**Needs human**: the message needs a person rather than an automated reply or help article.
+**Needs human**: the message needs a person to step in personally, beyond the normal queue: a person was asked for, money must be corrected, there is a security, legal or data-loss issue, an angry user threatens to leave, or an outage hits many users. A routine bug is not enough.
 
 **Contender**: a model being evaluated: Laya base, Laya fine-tuned, or Jev.
 

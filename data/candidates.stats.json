@@ -58,5 +58,12 @@
     "SpotifyCares": 30,
     "AppleSupport": 30
   },
-  "candidates": 3500
+  "twcs_boost_matches": {
+    "cancellation": 2796,
+    "praise": 6866,
+    "account-access": 3591,
+    "praise-strict": 2951
+  },
+  "twcs_boost": 800,
+  "candidates": 4300
 }
