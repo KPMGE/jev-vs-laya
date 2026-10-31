@@ -51,6 +51,8 @@ Coverage and joint accuracy (issue_type and team both right) per confidence band
 
 ## What it means
 
+The deeper breakdown (clear vs ambiguous messages, tickets vs tweets, per-class F1, lessons) is in the [benchmark report](benchmark.md#findings).
+
 - **Untrained Laya isn't usable for this task.** It's well behind on every field, and on needs_human it does worse than always answering "no".
 - **Training only the final layer is cheap and fixes calibration, not routing.** needs_human jumps from 42.5% to 76% and churn_risk from 34.5% to 53.5%. issue_type and team barely move. Its confidence is honest, though: the 24% it routes automatically were all right.
 - **The full fine-tune closes most of the gap to Jev.** It's within 3 points on team and churn_risk, ahead on urgency (72% vs 66%), and 6.5 points behind on issue_type. The rare classes are where it's weakest: issue_type macro-F1 is 0.71 against Jev's 0.84.

@@ -1,6 +1,6 @@
 # Data
 
-Where the messages come from and how the 3,500-message candidate pool is built.
+Where the messages come from and how the candidate pool is built: 3,500 base messages, plus 800 boost tweets for rare issue types (see [labeling](labeling.md#rare-issue-types-the-boost-pool)), for 4,300 in total.
 
 ```bash
 uv run scripts/fetch_data.py      # downloads into data/raw/, writes data/candidates.jsonl

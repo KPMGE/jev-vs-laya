@@ -36,7 +36,7 @@ On the 200 gold messages (provisional, against Opus labels until the human revie
 | p50 latency | 390 ms | 393 ms | 407 ms | **246 ms** |
 | $ per 1M messages | $0 | $0 | $0 | $47 |
 
-The full fine-tune closes most of the gap to Jev, but it's overconfident, so it can't be trusted to route on its own at Jev's threshold. Details are in [results](docs/results.md).
+The full fine-tune closes most of the gap to Jev, but it's overconfident, so it can't be trusted to route on its own at Jev's threshold. **Start with the [benchmark report](docs/benchmark.md)**: the dataset, how to run it, the results and the findings on one page. Full tables are in [results](docs/results.md).
 
 ## Quick start
 
@@ -59,7 +59,7 @@ uv run scripts/smoke.py           # terminal 2: one message through Laya (and Je
 | 6. Build training files | `uv run scripts/build_train_data.py` | [training](docs/training.md) |
 | 7. Fine-tune both variants on Colab | `notebooks/finetune_colab.ipynb`, then unzip into `models/` | [training](docs/training.md) |
 | 8. Compare all four | `uv run scripts/compare.py` | [evaluation](docs/evaluation.md) |
-| 9. Read the results | `docs/results.md` | [results](docs/results.md) |
+| 9. Read the results | `docs/benchmark.md` | [benchmark report](docs/benchmark.md), [results](docs/results.md) |
 
 Data and models are git-ignored, because the source datasets are non-commercial (CC BY-NC / CC BY-NC-SA). Every step can be re-run from the commands above. Claude labeling cost about $1.35 in total, and Jev costs under a cent per full comparison.
 
@@ -73,6 +73,6 @@ src/triage/
   metrics.py     accuracy, F1, MAE, AUC, ECE, trust gate
 scripts/         serve_laya.sh, smoke, fetch_data, label, split, review, build_train_data, compare
 notebooks/       finetune_colab.ipynb
-docs/            setup, data, labeling, training, evaluation, results
+docs/            benchmark (the report), setup, data, labeling, training, evaluation, results
 .scratch/        the planning map and its decision tickets
 ```
