@@ -24,6 +24,7 @@ A working repo (`~/Projects/mine/laya-vs-jev`) where Laya runs locally, a labele
 
 <!-- one line per closed ticket -->
 
+- [Run the two fine-tunes on Colab](issues/12-run-colab-fine-tunes.md): both trained on a T4 (full: 1 h 22 min); val accuracy 50.7% → 66.4% (head) / 79.7% (full); full model overconfident (temperatures at the clamp).
 - [Compare script](issues/11-compare-script.md): `scripts/compare.py` scores all contenders in one call per message (accuracy/F1/MAE/AUC/ECE, latency, cost, trust gate), records + replays runs; val baseline Laya base 63% vs Jev 88% on issue_type.
 - [Fine-tune run plan](issues/08-fine-tune-run-plan.md): fine-tune `english` twice (head-only and full), 3 epochs on a Colab T4 via a notebook, hard labels; served as `laya-ft-head` / `laya-ft-full`.
 - [Labeling protocol and gold review tool](issues/06-labeling-and-gold-review.md): Haiku labels all 4,300, Opus relabels the 500 eval messages, human reviews gold in a local web page; keyword boost pool for rare types; ≈$1.35 total.

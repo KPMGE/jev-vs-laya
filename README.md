@@ -22,6 +22,22 @@ Each message gets six decisions in a single call:
 
 The exact wording is in `src/triage/schema.py`, and the definitions are in `GLOSSARY.md`.
 
+## Results so far
+
+On the 200 gold messages (provisional, against Opus labels until the human review is done):
+
+| | laya-base | laya-ft-head | laya-ft-full | jev |
+|---|---|---|---|---|
+| issue_type | 66.5% | 68.5% | 81.5% | **88.0%** |
+| team | 62.0% | 65.5% | 83.5% | **86.5%** |
+| urgency | 29.5% | 32.0% | **72.0%** | 66.0% |
+| churn_risk | 34.5% | 53.5% | 75.5% | **78.5%** |
+| needs_human | 42.5% | 76.0% | 81.5% | **86.5%** |
+| p50 latency | 390 ms | 393 ms | 407 ms | **246 ms** |
+| $ per 1M messages | $0 | $0 | $0 | $47 |
+
+The full fine-tune closes most of the gap to Jev, but it's overconfident, so it can't be trusted to route on its own at Jev's threshold. Details are in [results](docs/results.md).
+
 ## Quick start
 
 ```bash

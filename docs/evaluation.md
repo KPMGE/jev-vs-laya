@@ -7,9 +7,10 @@ How the four contenders are compared, and what each number means.
 uv run scripts/compare.py --split val              # terminal 2: check the pipeline on val first
 uv run scripts/compare.py                          # the real run, on the human-reviewed gold set
 uv run scripts/compare.py --replay runs/<stamp>    # recompute metrics from saved responses, offline
+uv run scripts/compare.py --only laya-ft-full --add-to runs/<stamp>   # add a contender to an existing run
 ```
 
-`--limit N` scores only the first N messages, as a smoke test. `--allow-unreviewed` scores gold messages you haven't reviewed yet against their Opus labels; without it the script refuses to run on an incomplete gold set.
+`--limit N` scores only the first N messages, as a smoke test. `--only` runs a comma-separated subset of contenders. `--add-to` runs them on an existing run's messages and rescores everything in it. On a 16 GB Mac, three fp32 Laya checkpoints at once can push the machine into swap, so you can serve two models, then add the third. `--allow-unreviewed` scores gold messages you haven't reviewed yet against their Opus labels; without it the script refuses to run on an incomplete gold set.
 
 ## Contenders
 
@@ -79,4 +80,4 @@ This first run, `runs/20261029-230753`, used val (300 messages, Opus labels), be
 | all | $ per 1M messages | $0 | $46.72 |
 | gate | auto coverage · accuracy | 4.0% · 91.7% | 58.3% · 94.9% |
 
-Untrained Laya is well behind on every field. It's worst on needs_human: it says "yes" far too often, giving 39% accuracy where always answering "no" would score higher. It also sends 76% of messages to the human band. That's the gap the fine-tunes have to close. The final numbers on gold, with all four contenders, are in `docs/results.md`.
+Untrained Laya is well behind on every field. It's worst on needs_human: it says "yes" far too often, giving 39% accuracy where always answering "no" would score higher. It also sends 76% of messages to the human band. That's the gap the fine-tunes have to close. The numbers on gold, with all four contenders, are in [results](results.md).

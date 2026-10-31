@@ -4,6 +4,7 @@
     uv run scripts/compare.py                    # gold set (human-reviewed labels)
     uv run scripts/compare.py --split val        # val set (Opus labels): check the pipeline first
     uv run scripts/compare.py --replay runs/<timestamp>    # recompute metrics from saved responses
+    uv run scripts/compare.py --only laya-ft-full --add-to runs/<timestamp>   # add a contender to a run
 
 Every message is one /v1/systemone call carrying all six questions. Raw responses are saved
 to runs/<timestamp>/<contender>.jsonl, metrics to results.json and a table to results.md.
@@ -71,8 +72,14 @@ def available(backend: Backend, probe: str) -> bool:
     return True
 
 
-def contenders(probe: str) -> list[Backend]:
-    out = [b for name, model in LAYA_MODELS if available(b := laya(model, name=name), probe)]
+def contenders(probe: str, only: set[str] | None = None) -> list[Backend]:
+    names = [n for n, _ in LAYA_MODELS] + ["jev"]
+    if only and (unknown := only - set(names)):
+        sys.exit(f"unknown contender(s) {sorted(unknown)}; choose from {names}")
+    out = [b for name, model in LAYA_MODELS
+           if (not only or name in only) and available(b := laya(model, name=name), probe)]
+    if only and "jev" not in only:
+        return out
     if (j := jev()) is None:
         print("skipping jev: TYPESAFE_API_KEY not set", file=sys.stderr)
     elif available(j, probe):
@@ -166,10 +173,31 @@ def main() -> int:
     ap.add_argument("--replay", type=Path, help="a runs/<timestamp> folder to rescore without calling models")
     ap.add_argument("--allow-unreviewed", action="store_true", help="score unreviewed gold messages against Opus")
     ap.add_argument("--limit", type=int, help="only the first N messages (smoke test)")
+    ap.add_argument("--only", help="comma-separated contenders to run, e.g. laya-ft-full")
+    ap.add_argument("--add-to", type=Path, help="a runs/<timestamp> folder to add contenders to, on its messages")
     args = ap.parse_args()
     load_dotenv(ROOT / ".env")
+    only = set(args.only.split(",")) if args.only else None
 
-    if args.replay:
+    if args.add_to:
+        # Run the new contenders on exactly the run's messages, then score everything it holds.
+        # Useful when the machine can't hold every Laya checkpoint in memory at once.
+        out = args.add_to.resolve()
+        meta = json.loads((out / "meta.json").read_text())
+        split, prices = meta["split"], meta["prices"]
+        refs = reference(split, args.allow_unreviewed)
+        ids = [r["id"] for r in read_jsonl(next(out.glob("*.jsonl")))]
+        cands = {c["id"]: c for c in read_jsonl(DATA / "candidates.jsonl")}
+        messages = {i: state(cands[i]["body"], cands[i]["subject"]) for i in ids}
+        backends = contenders(next(iter(messages.values())), only)
+        if not backends:
+            sys.exit("none of the requested contenders is reachable")
+        prices |= {b.name: b.usd_per_mtok_in for b in backends}
+        (out / "meta.json").write_text(json.dumps(dict(meta, prices=prices), indent=1))
+        for b in backends:
+            run(b, messages, out / f"{b.name}.jsonl")
+        saved = {p.stem: read_jsonl(p) for p in sorted(out.glob("*.jsonl"))}
+    elif args.replay:
         meta = json.loads((args.replay / "meta.json").read_text())
         split, prices = meta["split"], meta["prices"]
         refs = reference(split, args.allow_unreviewed)
@@ -182,7 +210,7 @@ def main() -> int:
         ids = sorted(refs)[: args.limit] if args.limit else sorted(refs)
         refs = {i: refs[i] for i in ids}
         messages = {i: state(cands[i]["body"], cands[i]["subject"]) for i in ids}
-        backends = contenders(next(iter(messages.values())))
+        backends = contenders(next(iter(messages.values())), only)
         if not backends:
             sys.exit("no contender is reachable: start ./scripts/serve_laya.sh")
         out = RUNS / datetime.now().strftime("%Y%m%d-%H%M%S")

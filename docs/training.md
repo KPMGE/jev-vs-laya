@@ -70,7 +70,7 @@ Free Colab disconnects idle tabs. Because everything is written to Drive, a fini
 ./scripts/serve_laya.sh
 ```
 
-The script registers every `models/laya-ft-*` folder that contains `rl_agent_config.json` through `LAYA_EXTRA_MODELS`, under its folder name, and allows 3 loaded checkpoints (`LAYA_MAX_LOADED=3`, about 6 GB). A request picks the model through the `model` field:
+The script registers every `models/laya-ft-*` folder that contains `rl_agent_config.json` and `model.safetensors` through `LAYA_EXTRA_MODELS`, under its folder name, and allows 3 loaded checkpoints (`LAYA_MAX_LOADED=3`, about 6 GB). A request picks the model through the `model` field:
 
 ```python
 from triage.client import DecisionClient, laya
@@ -79,4 +79,22 @@ DecisionClient(laya("laya-ft-full", name="laya-ft-full"))
 
 ## Results
 
-_Filled in after the Colab runs: wall-clock time per run and the val before/after scores from each `train_report.json`._
+Both runs used a Colab T4 with `laya==0.4.17`, seed 0 and 3 epochs. The full fine-tune took **1 h 22 min** of wall-clock time; the head-only run is much shorter, because the encoder stays frozen. Scores are from each `train_report.json`: 1,800 val items (300 messages × 6 questions), Opus labels, never seen in training.
+
+| | untrained | `laya-ft-head` | `laya-ft-full` |
+| --- | --- | --- | --- |
+| accuracy, all questions | 50.7% | 66.4% | 79.7% |
+| choice (issue_type, team, sentiment) | 65.9% | 68.7% | 83.3% |
+| score (urgency, churn_risk) | 33.5% | 55.7% | 70.3% |
+| noul (needs_human) | 39.3% | 81.0% | 87.3% |
+| mean confidence | 64.7% | 66.3% | 93.2% |
+| ECE | 0.143 | 0.060 | 0.136 |
+| fitted temperature (choice / score / noul) | – | 1.12 / 1.09 / 0.89 | 5.0 / 5.0 / 5.0 |
+
+- **The head alone learns needs_human and the score questions**, but barely moves issue_type and team. Its confidence stays honest: 66% confidence, 66% accuracy.
+- **The full fine-tune is far more accurate but overconfident.** Its calibration temperatures all hit the trainer's upper clamp of 5 (`the fitted temperature 5 is on the [0.5, 5] clamp`), so even after calibration its confidence runs about 13 points above its accuracy. A trust gate tuned on Jev or on the head model would let too much of its output through unchecked.
+- The training log's `lr_scheduler.step() before optimizer.step()` warning is harmless: PyTorch skips the first value of the learning-rate schedule. Negative per-step losses are expected, because the `rlcd` loss includes a reward term.
+
+### Missing weights after a Drive download
+
+Drive zips a large folder in parts, and the `laya-ft-full` download arrived without its top-level `model.safetensors`. `checkpoint_latest/` holds the weights written at the end of the last epoch, and nothing changes the weights after that, so it should equal the final model. Drive can keep an older epoch's upload, though: for `laya-ft-head`, the two copies differed. Before using a `checkpoint_latest/` copy, check that it reproduces the `after` scores in `train_report.json` on val. For `laya-ft-full` it matched exactly (choice 83.33%, needs_human 87.33%), so it was copied up. `serve_laya.sh` skips any folder without `model.safetensors`.

@@ -15,7 +15,7 @@ export LAYA_MAX_LOADED="${LAYA_MAX_LOADED:-3}"  # base + two fine-tunes, ~2 GB e
 if [ -z "${LAYA_EXTRA_MODELS:-}" ]; then
   extra=""
   for dir in models/laya-ft-*/; do
-    [ -f "${dir}rl_agent_config.json" ] || continue
+    [ -f "${dir}rl_agent_config.json" ] && [ -f "${dir}model.safetensors" ] || continue  # skip half-copied folders
     name="$(basename "$dir")"
     extra="${extra:+$extra,}\"$name\":\"$PWD/${dir%/}\""
   done
